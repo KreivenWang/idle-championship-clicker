@@ -1,43 +1,92 @@
-Idle Champions
-ahk_class UnityWndClass
-ahk_exe IdleDragons.exe
-ahk_pid 36912
-ahk_id 199760
+# Auto Level Up 文档
 
-// green `
-Screen:	282, 1387
-Window:	-884, 1355
-Client:	-884, 1355 (default)
-Color:	5CCB2F (Red=5C Green=CB Blue=2F)
+## 程序信息
 
-// green f1
-Screen:	429, 1384
-Window:	-737, 1352
-Client:	-737, 1352 (default)
-Color:	5CCB2F (Red=5C Green=CB Blue=2F)
+| 属性 | 值 |
+|------|-----|
+| 窗口标题 | `Idle Champions` |
+| 窗口类 | `UnityWndClass` |
+| 进程名 | `IdleDragons.exe` |
 
-// blue f2
-Screen:	603, 1385
-Window:	-563, 1353
-Client:	-563, 1353 (default)
-Color:	5CABF7 (Red=5C Green=AB Blue=F7)
+---
+
+## 格子坐标信息
+
+### 图例
 
 ![green-click](green-click.png)
 
-格子宽度 大致 173
+### 坐标计算规则
 
-#sym:ButtonCoords  数组中，格子宽度173， 从第二个开始= 280+173； 第三个 280+173*2
+- **起始 X 坐标**: `280`
+- **格子宽度**: `173`
+- **Y 坐标**: `1384`
+- **计算公式**: `x = 280 + (index - 1) * 173`
 
-<!-- 窗口未激活-->
-Screen:	269, 1385
-Window:	-832, 1021
-Client:	-840, 990 (default)
-Color:	5CCB2F (Red=5C Green=CB Blue=2F)
+| 格子序号 | X 坐标 | 计算方式 |
+|---------|--------|----------|
+| 1 | 280 | 280 |
+| 2 | 453 | 280 + 173 |
+| 3 | 626 | 280 + 173 × 2 |
+| 4 | 799 | 280 + 173 × 3 |
+| ... | ... | ... |
+| n | 280 + (n-1) × 173 | 280 + 173 × (n-1) |
 
-<!-- 窗口激活 -->
-Screen:	271, 1386
-Window:	271, 1386
-Client:	271, 1386 (default)
-Color:	5CCB2F (Red=5C Green=CB Blue=2F)
+---
 
+## 需要检测的颜色
 
+| 颜色 | 十六进制 | RGB | 说明 |
+|------|----------|-----|------|
+| 绿色 | `0x5CCB2F` | R=5C, G=CB, B=2F | 升级按钮 |
+| 蓝色 | `0x5CABF7` | R=5C, G=AB, B=F7 | 购买按钮 |
+
+---
+
+## 窗口激活 vs 未激活的坐标差异
+
+> **注意**: 窗口未激活时，Window/Client 坐标为负数（相对于桌面），而激活后为正数。建议使用 **Screen 坐标** 或 **相对于窗口左上角的偏移量**。
+
+### 窗口未激活
+
+| 坐标类型 | X | Y |
+|----------|---|---|
+| Screen | 269 | 1385 |
+| Window | -832 | 1021 |
+| Client | -840 | 990 |
+
+### 窗口激活
+
+| 坐标类型 | X | Y |
+|----------|---|---|
+| Screen | 271 | 1386 |
+| Window | 271 | 1386 |
+| Client | 271 | 1386 |
+
+---
+
+## 按钮位置示例
+
+### 第 1 个按钮 (绿色)
+
+| 坐标类型 | X | Y | 颜色 |
+|----------|---|---|------|
+| Screen | 282 | 1387 | `0x5CCB2F` |
+| Window | -884 | 1355 | |
+| Client | -884 | 1355 | |
+
+### 第 2 个按钮 (绿色)
+
+| 坐标类型 | X | Y | 颜色 |
+|----------|---|---|------|
+| Screen | 429 | 1384 | `0x5CCB2F` |
+| Window | -737 | 1352 | |
+| Client | -737 | 1352 | |
+
+### 第 3 个按钮 (蓝色)
+
+| 坐标类型 | X | Y | 颜色 |
+|----------|---|---|------|
+| Screen | 603 | 1385 | `0x5CABF7` |
+| Window | -563 | 1353 | |
+| Client | -563 | 1353 | |
