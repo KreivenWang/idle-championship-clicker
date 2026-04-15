@@ -1,6 +1,7 @@
 #Requires AutoHotkey v2.0
 
-#Include "lib\window-util.ahk"
+#Include "..\lib\window-util.ahk"
+#Include "..\lib\gui-logger.ahk"
 
 ; ==========================================
 ; ⚙️ 配置区域 (请根据实际情况修改这里)
@@ -18,7 +19,7 @@ ColorVariance := 20
 ; 4. 13个格子的坐标列表 (X, Y)
 ; 格式: [ [x1, y1], [x2, y2], ... ]
 ; 使用变量和计算方式生成坐标，方便维护
-ButtonStartX := 280
+ButtonStartX := 230
 ButtonWidth := 173
 ButtonY := 1384
 ButtonCount := 13
@@ -31,6 +32,7 @@ Loop ButtonCount {
 
 ; 5. 检测频率 (毫秒)。每多少毫秒扫描一次屏幕？建议 200-500
 ScanInterval := 2000
+DebugDelay := 500 ; 调试时的额外延迟，正式使用时可以设为0
 
 ; ==========================================
 ; 🚀 核心逻辑 (下面代码通常不需要动)
@@ -38,6 +40,12 @@ ScanInterval := 2000
 
 ; 初始化 Pause 快捷键
 WindowUtils.SetupPauseHotkey("Auto Level Up")
+
+; 初始化日志窗口
+GuiLogger.Init("Auto Level Up - 日志")
+
+; 记录脚本启动
+GuiLogger.Log("脚本启动")
 
 ; 主循环
 SetTimer(CheckButtons, ScanInterval)
@@ -50,43 +58,47 @@ CheckButtons() {
         return
     }
 
-    ; 1. 检查窗口是否存在 (如果设置了窗口标题)
+    ; 1. 检查窗口是否存在并激活到前台
     if (GameWindowTitle != "") {
         if !WindowUtils.Exists(GameWindowTitle) {
-            ; 窗口没找到，不做任何事
+            GuiLogger.Log("窗口不存在: " GameWindowTitle)
             return
         }
-        ; 保持后台运行，不激活窗口
+        ; 确保窗口激活到前台
+        if WinActive(GameWindowTitle) = 0 {
+            GuiLogger.Log("激活窗口到前台")
+            WinActivate(GameWindowTitle)
+            WinWaitActive(GameWindowTitle, , 2)
+        }
     }
 
     ; 2. 遍历 13 个坐标
     for Index, Coord in ButtonCoords {
-        x := Coord[1]
-        y := Coord[2]
+        ; 获取窗口位置，计算屏幕绝对坐标
+        WinPos := WindowUtils.GetPosition(GameWindowTitle)
+        x := WinPos.x + Coord[1]
+        y := WinPos.y + Coord[2]
 
         ; 2.1 先移动鼠标到目标位置
         MouseMove(x, y, 0)
 
         ; 2.2 稍微等待鼠标移动完成
-        Sleep(50)
+        Sleep(50 + DebugDelay)
 
         ; 3. 获取该坐标的像素颜色
-        ; PixelGetColor 返回的是十进制，需要转换或者直接比较
         currentColor := PixelGetColor(x, y, "RGB")
 
         ; 4. 判断颜色是否匹配 (考虑容差)
-        ; 这里使用简单的颜色近似判断
         if (ColorsMatch(currentColor, TargetColor, ColorVariance)) {
             ; 颜色匹配！执行点击
-            ; Click()
-            ControlClick("x" x " y" y, "Idle Champions")
+            Click()
 
-            ; 如果你想用 ToolTip 在屏幕上显示日志，而不是在 VS Code 控制台
-            ToolTip("后台点击了: " x "," y)
+            GuiLogger.Log("点击了按钮 #" Index " 坐标: " x "," y " 颜色: " Format("{:#x}", currentColor))
+            GuiLogger.UpdateStatus("已点击按钮 #" Index)
 
-            ; 点击后稍微停顿一下，防止一帧内重复点击或误触
-            Sleep(1000)
-            break ; 跳出循环，重新开始检测 (防止一次扫描点多个)
+            ; 点击后稍微停顿一下
+            Sleep(1000 + DebugDelay)
+            break ; 跳出循环，重新开始检测
         }
     }
 }
@@ -102,8 +114,4 @@ ColorsMatch(c1, c2, variance) {
     b2 := c2 & 0xFF
 
     return (Abs(r1 - r2) <= variance && Abs(g1 - g2) <= variance && Abs(b1 - b2) <= variance)
-}
-
-RemoveToolTip() {
-    ToolTip()
 }
