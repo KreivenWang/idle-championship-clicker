@@ -10,8 +10,8 @@
 ; 1. 游戏窗口标题 (如果不确定，可以先留空 ""，脚本会默认操作当前激活的窗口)
 GameWindowTitle := "Idle Champions" ; 例如 "Idle Champions" 或者留空 ""
 
-; 2. "变绿"的颜色代码 (从 Window Spy 获取，格式 0xRRGGBB)
-TargetColor := "0x5CCB2F" ; <--- 替换成你看到的绿色代码
+; 2. 需要点击的颜色数组
+TargetColors := ["0x5CCB2F", "0x5CABF7"]  ; 绿色, 蓝色
 
 ; 3. 颜色误差容差 (0-255)。因为游戏可能有光影效果，颜色不会完全一样，建议设为 10-30
 ColorVariance := 20
@@ -51,7 +51,7 @@ GuiLogger.Log("脚本启动")
 SetTimer(CheckButtons, ScanInterval)
 
 CheckButtons() {
-    global GameWindowTitle, TargetColor, ColorVariance, ButtonCoords
+    global GameWindowTitle, TargetColors, ColorVariance, ButtonCoords
 
     ; 检查是否暂停
     if (WindowUtils.IsPaused()) {
@@ -72,8 +72,12 @@ CheckButtons() {
         }
     }
 
-    ; 2. 遍历 13 个坐标
-    for Index, Coord in ButtonCoords {
+    ; 2. 从后往前遍历坐标
+    totalCount := ButtonCoords.Length
+    Loop totalCount {
+        Index := totalCount - A_Index + 1  ; 从后往前
+        Coord := ButtonCoords[Index]
+
         ; 获取窗口位置，计算屏幕绝对坐标
         WinPos := WindowUtils.GetPosition(GameWindowTitle)
         x := WinPos.x + Coord[1]
@@ -88,8 +92,16 @@ CheckButtons() {
         ; 3. 获取该坐标的像素颜色
         currentColor := PixelGetColor(x, y, "RGB")
 
-        ; 4. 判断颜色是否匹配 (考虑容差)
-        if (ColorsMatch(currentColor, TargetColor, ColorVariance)) {
+        ; 4. 判断颜色是否匹配 (遍历所有目标颜色)
+        matched := false
+        for targetColor in TargetColors {
+            if (ColorsMatch(currentColor, targetColor, ColorVariance)) {
+                matched := true
+                break
+            }
+        }
+
+        if (matched) {
             ; 颜色匹配！执行点击
             Click()
 
@@ -98,7 +110,6 @@ CheckButtons() {
 
             ; 点击后稍微停顿一下
             Sleep(1000 + DebugDelay)
-            break ; 跳出循环，重新开始检测
         }
     }
 }
