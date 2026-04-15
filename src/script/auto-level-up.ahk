@@ -101,15 +101,21 @@ CheckButtons() {
             }
         }
 
-        if (matched) {
-            ; 颜色匹配！执行点击
-            Click()
+        if (!matched) {
+            break
+        }
 
-            GuiLogger.Log("点击了按钮 #" Index " 坐标: " x "," y " 颜色: " Format("{:#x}", currentColor))
-            GuiLogger.UpdateStatus("已点击按钮 #" Index)
+        ; 5. 颜色匹配！执行点击
+        Click()
 
-            ; 点击后稍微停顿一下
-            Sleep(1000 + DebugDelay)
+        GuiLogger.Log("点击了按钮 #" Index " 坐标: " x "," y " 颜色: " Format("{:#x}", currentColor))
+        GuiLogger.UpdateStatus("已点击按钮 #" Index)
+
+        ; 点击后稍微停顿一下
+        Sleep(1000 + DebugDelay)
+        ; 检查是否暂停
+        if (WindowUtils.IsPaused()) {
+            return
         }
     }
 }
