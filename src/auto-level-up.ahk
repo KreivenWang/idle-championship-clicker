@@ -69,6 +69,12 @@ CheckButtons() {
         x := Coord[1]
         y := Coord[2]
 
+        ; 2.1 先移动鼠标到目标位置
+        MouseMove(x, y, 0)
+
+        ; 2.2 稍微等待鼠标移动完成
+        Sleep(50)
+
         ; 3. 获取该坐标的像素颜色
         ; PixelGetColor 返回的是十进制，需要转换或者直接比较
         currentColor := PixelGetColor(x, y, "RGB")
@@ -77,23 +83,17 @@ CheckButtons() {
         ; 这里使用简单的颜色近似判断
         if (ColorsMatch(currentColor, TargetColor, ColorVariance)) {
             ; 颜色匹配！执行点击
-            ClickButton(x, y)
+            ; Click()
+            ControlClick "x" x " y" y, "Idle Champions"
+        
+            ; 如果你想用 ToolTip 在屏幕上显示日志，而不是在 VS Code 控制台
+            ToolTip "后台点击了: " x "," y
 
             ; 点击后稍微停顿一下，防止一帧内重复点击或误触
-            Sleep(100)
+            Sleep(1000)
             break ; 跳出循环，重新开始检测 (防止一次扫描点多个)
         }
     }
-}
-
-; 模拟点击函数
-ClickButton(x, y) {
-    ; 移动鼠标并点击
-    ; 使用 "NA" (No Activate) 防止窗口被强制切到前台 (视游戏而定)
-    MouseMove(x, y, 0) ; 0 速度瞬间移动
-    Click()
-    ; 可选：打印日志到控制台
-    ; ConsoleWrite("点击了坐标: " x "," y "`n")
 }
 
 ; 简单的颜色容差比较函数

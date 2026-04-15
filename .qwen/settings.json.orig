@@ -3,6 +3,5 @@
     "allow": [
       "Bash(git init)"
     ]
-  },
-  "$version": 3
+  }
 }
