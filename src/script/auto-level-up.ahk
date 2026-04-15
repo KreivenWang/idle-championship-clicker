@@ -1,6 +1,7 @@
 #Requires AutoHotkey v2.0
 
 #Include "..\lib\window-util.ahk"
+#Include "..\lib\hotkey-util.ahk"
 #Include "..\lib\gui-logger.ahk"
 
 ; ==========================================
@@ -34,12 +35,22 @@ Loop ButtonCount {
 ScanInterval := 2000
 DebugDelay := 500 ; 调试时的额外延迟，正式使用时可以设为0
 
+; 6. “选择”按钮图片路径（若出现绿色“选择”按钮，优先点击）
+SelectButtonImage := A_ScriptDir "\..\screenshot\auto-level-up\select.png"
+SelectImageVariance := 200 ; 图像搜索容差，可根据需要调大
+
 ; ==========================================
 ; 🚀 核心逻辑 (下面代码通常不需要动)
 ; ==========================================
 
+; 让脚本适应高DPI屏幕，确保没有windows缩放 125% 150%，确保坐标和颜色检测准确
+DllCall("SetProcessDPIAware")
+
 ; 初始化 Pause 快捷键
-WindowUtils.SetupPauseHotkey("Auto Level Up")
+HotkeyUtil.SetupPauseHotkey("Auto Level Up")
+
+; 初始化 ScrollLock 退出快捷键
+HotkeyUtil.SetupScrollLockExit("Auto Level Up")
 
 ; 初始化日志窗口
 GuiLogger.Init("Auto Level Up - 日志")
@@ -51,7 +62,7 @@ GuiLogger.Log("脚本启动")
 SetTimer(CheckButtons, ScanInterval)
 
 CheckButtons() {
-    global GameWindowTitle, TargetColors, ColorVariance, ButtonCoords
+    global GameWindowTitle, TargetColors, ColorVariance, ButtonCoords, SelectButtonImage, SelectImageVariance
 
     ; 检查是否暂停
     if (WindowUtils.IsPaused()) {
@@ -70,6 +81,11 @@ CheckButtons() {
             WinActivate(GameWindowTitle)
             WinWaitActive(GameWindowTitle, , 2)
         }
+    }
+
+    ; 尝试先点击“选择”按钮
+    if (TryClickSelectButton()) {
+        Sleep(50 + DebugDelay)
     }
 
     ; 2. 从后往前遍历坐标
@@ -101,21 +117,14 @@ CheckButtons() {
             }
         }
 
-        if (!matched) {
-            break
-        }
+        if (matched) {
+            ; 5. 颜色匹配！执行点击
+            Click()
+            GuiLogger.Log("点击了按钮 #" Index " 坐标: " x "," y " 颜色: " Format("{:#x}", currentColor))
+            GuiLogger.UpdateStatus("已点击按钮 #" Index)
 
-        ; 5. 颜色匹配！执行点击
-        Click()
-
-        GuiLogger.Log("点击了按钮 #" Index " 坐标: " x "," y " 颜色: " Format("{:#x}", currentColor))
-        GuiLogger.UpdateStatus("已点击按钮 #" Index)
-
-        ; 点击后稍微停顿一下
-        Sleep(1000 + DebugDelay)
-        ; 检查是否暂停
-        if (WindowUtils.IsPaused()) {
-            return
+            ; 点击后稍微停顿一下
+            Sleep(50 + DebugDelay)
         }
     }
 }
@@ -131,4 +140,33 @@ ColorsMatch(c1, c2, variance) {
     b2 := c2 & 0xFF
 
     return (Abs(r1 - r2) <= variance && Abs(g1 - g2) <= variance && Abs(b1 - b2) <= variance)
+}
+
+TryClickSelectButton() {
+    global GameWindowTitle, SelectButtonImage, SelectImageVariance
+
+    local FoundX := 0, FoundY := 0
+
+    if (SelectButtonImage = "") {
+        return false
+    }
+
+    WinPos := WindowUtils.GetPosition(GameWindowTitle)
+    if !IsObject(WinPos) {
+        return false
+    }
+
+    result := ImageSearch(&FoundX, &FoundY, WinPos.x, WinPos.y, WinPos.x + WinPos.w, WinPos.y + WinPos.h, "*n" SelectImageVariance " " SelectButtonImage)
+
+    if (result = 1 and FoundX != "" and FoundY != "") {
+        MouseMove(FoundX + 10, FoundY + 10, 0)
+        Sleep(50)
+        Click()
+        GuiLogger.Log("检测到并点击了选择按钮: " SelectButtonImage)
+        GuiLogger.UpdateStatus("已点击选择按钮")
+        return true
+    }
+
+    GuiLogger.Log("未检测到选择按钮: " SelectButtonImage)
+    return false
 }
