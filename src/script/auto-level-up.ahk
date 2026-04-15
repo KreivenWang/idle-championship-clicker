@@ -1,5 +1,7 @@
 #Requires AutoHotkey v2.0
 
+#Include "lib\window-util.ahk"
+
 ; ==========================================
 ; ⚙️ 配置区域 (请根据实际情况修改这里)
 ; ==========================================
@@ -34,19 +36,8 @@ ScanInterval := 2000
 ; 🚀 核心逻辑 (下面代码通常不需要动)
 ; ==========================================
 
-; 全局变量用于控制脚本启停
-g_IsRunning := true
-
-; F1 键暂停/继续脚本
-F1:: {
-    global g_IsRunning
-    g_IsRunning := !g_IsRunning
-    ToolTip(g_IsRunning ? "脚本运行中..." : "脚本已暂停")
-    SetTimer(RemoveToolTip, -1000)
-}
-
-; F2 键退出脚本
-F2::ExitApp
+; 初始化 Pause 快捷键
+WindowUtils.SetupPauseHotkey("Auto Level Up")
 
 ; 主循环
 SetTimer(CheckButtons, ScanInterval)
@@ -54,14 +45,18 @@ SetTimer(CheckButtons, ScanInterval)
 CheckButtons() {
     global GameWindowTitle, TargetColor, ColorVariance, ButtonCoords
 
-    ; 1. 检查窗口是否存在/激活 (如果设置了窗口标题)
+    ; 检查是否暂停
+    if (WindowUtils.IsPaused()) {
+        return
+    }
+
+    ; 1. 检查窗口是否存在 (如果设置了窗口标题)
     if (GameWindowTitle != "") {
-        if !WinExist(GameWindowTitle) {
+        if !WindowUtils.Exists(GameWindowTitle) {
             ; 窗口没找到，不做任何事
             return
         }
-        ; 可选：如果希望后台运行，需要激活窗口，或者使用 ControlClick (更高级)
-        ; WinActivate(GameWindowTitle)
+        ; 保持后台运行，不激活窗口
     }
 
     ; 2. 遍历 13 个坐标
@@ -84,10 +79,10 @@ CheckButtons() {
         if (ColorsMatch(currentColor, TargetColor, ColorVariance)) {
             ; 颜色匹配！执行点击
             ; Click()
-            ControlClick "x" x " y" y, "Idle Champions"
-        
+            ControlClick("x" x " y" y, "Idle Champions")
+
             ; 如果你想用 ToolTip 在屏幕上显示日志，而不是在 VS Code 控制台
-            ToolTip "后台点击了: " x "," y
+            ToolTip("后台点击了: " x "," y)
 
             ; 点击后稍微停顿一下，防止一帧内重复点击或误触
             Sleep(1000)

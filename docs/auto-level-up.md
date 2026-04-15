@@ -27,3 +27,17 @@ Color:	5CABF7 (Red=5C Green=AB Blue=F7)
 格子宽度 大致 173
 
 #sym:ButtonCoords  数组中，格子宽度173， 从第二个开始= 280+173； 第三个 280+173*2
+
+<!-- 窗口未激活-->
+Screen:	269, 1385
+Window:	-832, 1021
+Client:	-840, 990 (default)
+Color:	5CCB2F (Red=5C Green=CB Blue=2F)
+
+<!-- 窗口激活 -->
+Screen:	271, 1386
+Window:	271, 1386
+Client:	271, 1386 (default)
+Color:	5CCB2F (Red=5C Green=CB Blue=2F)
+
+
