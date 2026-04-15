@@ -2,6 +2,7 @@
 
 #Include "..\lib\window-util.ahk"
 #Include "..\lib\hotkey-util.ahk"
+#Include "..\lib\color-util.ahk"
 #Include "..\lib\gui-logger.ahk"
 
 ; ==========================================
@@ -33,10 +34,9 @@ Loop ButtonCount {
 
 ; 5. 检测频率 (毫秒)。每多少毫秒扫描一次屏幕？建议 200-500
 ScanInterval := 2000
-DebugDelay := 500 ; 调试时的额外延迟，正式使用时可以设为0
 
 ; 6. “选择”按钮图片路径（若出现绿色“选择”按钮，优先点击）
-SelectButtonImage := A_ScriptDir "\..\screenshot\auto-level-up\select.png"
+SelectButtonImage := "select-btn.png"
 SelectImageVariance := 200 ; 图像搜索容差，可根据需要调大
 
 ; ==========================================
@@ -65,7 +65,7 @@ CheckButtons() {
     global GameWindowTitle, TargetColors, ColorVariance, ButtonCoords, SelectButtonImage, SelectImageVariance
 
     ; 检查是否暂停
-    if (WindowUtils.IsPaused()) {
+    if (HotkeyUtil.IsPaused()) {
         return
     }
 
@@ -75,17 +75,12 @@ CheckButtons() {
             GuiLogger.Log("窗口不存在: " GameWindowTitle)
             return
         }
-        ; 确保窗口激活到前台
-        if WinActive(GameWindowTitle) = 0 {
-            GuiLogger.Log("激活窗口到前台")
-            WinActivate(GameWindowTitle)
-            WinWaitActive(GameWindowTitle, , 2)
-        }
+        WindowUtils.EnsureActive(GameWindowTitle)
     }
 
     ; 尝试先点击“选择”按钮
     if (TryClickSelectButton()) {
-        Sleep(50 + DebugDelay)
+        Sleep(50)
     }
 
     ; 2. 从后往前遍历坐标
@@ -103,7 +98,7 @@ CheckButtons() {
         MouseMove(x, y, 0)
 
         ; 2.2 稍微等待鼠标移动完成
-        Sleep(50 + DebugDelay)
+        Sleep(50)
 
         ; 3. 获取该坐标的像素颜色
         currentColor := PixelGetColor(x, y, "RGB")
@@ -111,35 +106,25 @@ CheckButtons() {
         ; 4. 判断颜色是否匹配 (遍历所有目标颜色)
         matched := false
         for targetColor in TargetColors {
-            if (ColorsMatch(currentColor, targetColor, ColorVariance)) {
+            if (ColorUtil.ColorsMatch(currentColor, targetColor, ColorVariance)) {
                 matched := true
                 break
             }
         }
 
         if (matched) {
-            ; 5. 颜色匹配！执行点击
-            Click()
-            GuiLogger.Log("点击了按钮 #" Index " 坐标: " x "," y " 颜色: " Format("{:#x}", currentColor))
-            GuiLogger.UpdateStatus("已点击按钮 #" Index)
+            ; 5. 颜色匹配！执行点击5次
+            Loop 5 {
+                Click()
+                Sleep(20)
+            }
+            GuiLogger.Log("点击了按钮5次 #" Index " 坐标: " x "," y " 颜色: " Format("{:#x}", currentColor))
+            GuiLogger.UpdateStatus("已点击按钮5次 #" Index)
 
             ; 点击后稍微停顿一下
-            Sleep(50 + DebugDelay)
+            Sleep(50)
         }
     }
-}
-
-; 简单的颜色容差比较函数
-ColorsMatch(c1, c2, variance) {
-    r1 := (c1 >> 16) & 0xFF
-    g1 := (c1 >> 8) & 0xFF
-    b1 := c1 & 0xFF
-
-    r2 := (c2 >> 16) & 0xFF
-    g2 := (c2 >> 8) & 0xFF
-    b2 := c2 & 0xFF
-
-    return (Abs(r1 - r2) <= variance && Abs(g1 - g2) <= variance && Abs(b1 - b2) <= variance)
 }
 
 TryClickSelectButton() {
