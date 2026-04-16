@@ -24,7 +24,7 @@ class HotkeyUtil {
         } else {
             ToolTip("脚本已暂停 (按 Pause 继续)" (label ? " [" label "]" : ""))
         }
-        SetTimer(() => ToolTip(), -1500)
+        SetTimer(() => ToolTip(), -3000)
     }
 
 
