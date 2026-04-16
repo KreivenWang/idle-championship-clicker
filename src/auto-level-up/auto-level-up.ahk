@@ -33,11 +33,20 @@ Loop ButtonCount {
 }
 
 ; 5. 检测频率 (毫秒)。每多少毫秒扫描一次屏幕？建议 200-500
-ScanInterval := 2000
+ScanInterval := 3000
 
-; 6. “选择”按钮图片路径（若出现绿色“选择”按钮，优先点击）
+; 6. "选择"按钮图片路径（若出现绿色"选择"按钮，优先点击）
 SelectButtonImage := "select-btn.png"
 SelectImageVariance := 200 ; 图像搜索容差，可根据需要调大
+
+; 7. 敌人区域扫描配置
+EnemyAreaStartX := 927       ; 扫描区域左上角 X
+EnemyAreaStartY := 461       ; 扫描区域左上角 Y
+EnemyAreaEndX := 2462        ; 扫描区域右下角 X
+EnemyAreaEndY := 1110        ; 扫描区域右下角 Y
+EnemyAreaScanLineSpacing := 50 ; 每行扫描间距（像素），默认 50
+EnemyAreaScanStep := 50      ; 蛇形扫描每步移动的像素距离，默认 50
+EnemyAreaMouseMoveSpeed := 50 ; 鼠标移动速度 (0-100)，0=瞬间移动，数值越大越慢，默认 3
 
 ; ==========================================
 ; 🚀 核心逻辑 (下面代码通常不需要动)
@@ -62,7 +71,7 @@ GuiLogger.Log("脚本启动")
 SetTimer(CheckButtons, ScanInterval)
 
 CheckButtons() {
-    global GameWindowTitle, TargetColors, ColorVariance, ButtonCoords, SelectButtonImage, SelectImageVariance
+    global GameWindowTitle, TargetColors, ColorVariance, ButtonCoords, SelectButtonImage, SelectImageVariance, EnemyAreaStartX, EnemyAreaStartY, EnemyAreaEndX, EnemyAreaEndY, EnemyAreaScanLineSpacing, EnemyAreaMouseMoveSpeed
 
     ; 检查是否暂停
     if (HotkeyUtil.IsPaused()) {
@@ -124,7 +133,12 @@ CheckButtons() {
             ; 点击后稍微停顿一下
             Sleep(50)
         }
+
+
     }
+
+    ; 6. 蛇形移动鼠标涂抹敌人所在区域
+    ScanEnemyArea()
 }
 
 TryClickSelectButton() {
@@ -147,11 +161,77 @@ TryClickSelectButton() {
         MouseMove(FoundX + 10, FoundY + 10, 0)
         Sleep(50)
         Click()
-        GuiLogger.Log("检测到并点击了选择按钮: " SelectButtonImage)
+        GuiLogger.Log("检测到并点击了选择按钮：" SelectButtonImage)
         GuiLogger.UpdateStatus("已点击选择按钮")
         return true
     }
 
-    GuiLogger.Log("未检测到选择按钮: " SelectButtonImage)
+    GuiLogger.Log("未检测到选择按钮：" SelectButtonImage)
     return false
+}
+
+/**
+ * 蛇形逐行移动鼠标扫描涂抹敌人所在区域
+ * 从左上角开始，逐行左右扫描，覆盖整个敌人区域
+ */
+/**
+ * 蛇形逐行移动鼠标扫描涂抹敌人所在区域
+ * 从左上角开始，逐行左右扫描，覆盖整个敌人区域
+ */
+ScanEnemyArea() {
+    global GameWindowTitle, EnemyAreaStartX, EnemyAreaStartY, EnemyAreaEndX, EnemyAreaEndY, EnemyAreaScanLineSpacing, EnemyAreaScanStep, EnemyAreaMouseMoveSpeed
+
+    ; 获取窗口位置，计算绝对坐标
+    WinPos := WindowUtils.GetPosition(GameWindowTitle)
+    if !IsObject(WinPos) {
+        return
+    }
+
+    ; 计算扫描区域的绝对坐标
+    startX := WinPos.x + EnemyAreaStartX
+    startY := WinPos.y + EnemyAreaStartY
+    endX := WinPos.x + EnemyAreaEndX
+    endY := WinPos.y + EnemyAreaEndY
+
+    ; 计算扫描行数
+    totalLines := Ceil((endY - startY) / EnemyAreaScanLineSpacing)
+
+    ; 蛇形扫描：逐行左右移动
+    Loop totalLines {
+        lineIndex := A_Index
+        currentY := startY + (lineIndex - 1) * EnemyAreaScanLineSpacing
+
+        ; 确保 Y 坐标不超过扫描区域
+        if (currentY > endY) {
+            break
+        }
+
+        ; 计算当前行需要扫描的步数
+        totalSteps := Ceil((endX - startX) / EnemyAreaScanStep)
+
+        ; 偶数行：从左到右
+        if (Mod(lineIndex, 2) = 1) {
+            Loop totalSteps {
+                currentX := startX + (A_Index - 1) * EnemyAreaScanStep
+                if (currentX > endX) {
+                    break
+                }
+                MouseMove(currentX, currentY, EnemyAreaMouseMoveSpeed)
+                Sleep(10)
+            }
+        } else {
+            ; 奇数行：从右到左
+            Loop totalSteps {
+                currentX := endX - (A_Index - 1) * EnemyAreaScanStep
+                if (currentX < startX) {
+                    break
+                }
+                MouseMove(currentX, currentY, EnemyAreaMouseMoveSpeed)
+                Sleep(10)
+            }
+        }
+    }
+
+    ; 扫描完成后回到起始位置
+    MouseMove(startX, startY, EnemyAreaMouseMoveSpeed)
 }
