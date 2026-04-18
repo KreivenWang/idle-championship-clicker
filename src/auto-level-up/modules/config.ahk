@@ -142,7 +142,7 @@ EnemyAreaMouseMoveSpeed := 50
  * 是否启用调试标记
  * true=绘制红色圆圈标记坐标位置
  */
-EnableDebugMarkers := true
+EnableDebugMarkers := false
 
 /**
  * 按钮坐标标记半径（像素）

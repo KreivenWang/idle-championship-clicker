@@ -19,7 +19,7 @@
  * @param clickDelay 每个点点击后的延迟（毫秒）
  * @param autoReturn 是否自动返回起始点
  */
-SmoothScanCoords(windowTitle, coords, mouseSpeed := 3, moveStep := 50, clickDelay := 50, autoReturn := false) {
+SmoothScanCoords(windowTitle, coords, mouseSpeed := 3, moveStep := 50, clickDelay := 1, autoReturn := false) {
     ; 获取窗口位置，计算绝对坐标
     WinPos := WindowUtils.GetPosition(windowTitle)
     if !IsObject(WinPos) {
@@ -38,7 +38,7 @@ SmoothScanCoords(windowTitle, coords, mouseSpeed := 3, moveStep := 50, clickDela
 
     ; 移动到第一个点
     MouseMove(absStartX, absStartY, mouseSpeed)
-    Sleep(30)
+    Sleep(1)
     Click()
     Sleep(clickDelay)
 
@@ -117,57 +117,3 @@ GenerateLinearPath(x1, y1, x2, y2, pointsCount := 10) {
     return points
 }
 
-/**
- * 顺滑遍历坐标数组（带路径插值）
- * 在两个坐标点之间生成中间点，实现更顺滑的移动轨迹
- * @param windowTitle 窗口标题
- * @param coords 坐标数组，格式：[[x1, y1], [x2, y2], ...]
- * @param mouseSpeed 鼠标移动速度 (0-100)
- * @param interpolationPoints 插值点数量（两个坐标点之间的中间点数）
- * @param clickDelay 每个点点击后的延迟（毫秒）
- */
-SmoothScanWithInterpolation(windowTitle, coords, mouseSpeed := 10, interpolationPoints := 10, clickDelay := 50) {
-    ; 获取窗口位置，计算绝对坐标
-    WinPos := WindowUtils.GetPosition(windowTitle)
-    if !IsObject(WinPos) {
-        return
-    }
-
-    ; 检查坐标数组是否为空
-    if (coords.Length = 0) {
-        return
-    }
-
-    ; 移动到第一个点
-    firstCoord := coords[1]
-    MouseMove(WinPos.x + firstCoord[1], WinPos.y + firstCoord[2], mouseSpeed)
-    Sleep(30)
-    Click()
-    Sleep(clickDelay)
-
-    ; 从第二个点开始，生成插值路径并移动
-    Loop coords.Length - 1 {
-        Index := A_Index
-        prevCoord := coords[Index]
-        nextCoord := coords[Index + 1]
-        
-        ; 计算绝对坐标
-        prevX := WinPos.x + prevCoord[1]
-        prevY := WinPos.y + prevCoord[2]
-        nextX := WinPos.x + nextCoord[1]
-        nextY := WinPos.y + nextCoord[2]
-        
-        ; 生成中间点
-        pathPoints := GenerateLinearPath(prevX, prevY, nextX, nextY, interpolationPoints)
-        
-        ; 遍历中间点
-        for _, point in pathPoints {
-            MouseMove(point[1], point[2], mouseSpeed)
-            Sleep(1)
-            ; 沿着路经点击
-            Click()
-        }
-        
-        Sleep(clickDelay)
-    }
-}
