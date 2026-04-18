@@ -2,54 +2,52 @@
 
 /**
  * 坐标调试工具库
- * 用于在游戏窗口上绘制红色圆圈标记指定坐标位置
+ * 用于在游戏窗口上绘制累加数字标记指定坐标位置
  * 使用场景：调试时确认坐标配置是否正确
  */
 
 /**
- * 在指定窗口的一系列坐标位置上绘制红色圆圈高亮标识
+ * 在指定窗口的一系列坐标位置上绘制累加数字高亮标识
  * @param windowTitle 窗口标题
  * @param coords 坐标数组，格式：[[x1, y1], [x2, y2], ...]
- * @param radius 圆圈半径（像素），默认 15
+ * @param fontSize 字体大小（像素），默认 20
  */
-DrawCoordMarkers(windowTitle, coords, radius := 15) {
+DrawCoordMarkers(windowTitle, coords, fontSize := 10) {
     ; 获取窗口位置
     WinPos := WindowUtils.GetPosition(windowTitle)
     if !IsObject(WinPos) {
         return
     }
 
-    ; 遍历所有坐标，画红色圆圈
+    ; 遍历所有坐标，画累加数字
     for Index, Coord in coords {
         ; 计算屏幕绝对坐标
         x := WinPos.x + Coord[1]
         y := WinPos.y + Coord[2]
 
-        ; 画红色圆圈标识
-        DrawRedCircle(x, y, radius)
+        ; 画累加数字标识（序号从 1 开始）
+        DrawNumberLabel(x, y, Index, fontSize)
     }
 }
 
 /**
- * 在指定位置画一个红色圆圈
- * @param centerX 圆心 X 坐标（屏幕绝对坐标）
- * @param centerY 圆心 Y 坐标（屏幕绝对坐标）
- * @param radius 圆的半径（像素）
+ * 在指定位置画一个数字标签
+ * @param centerX 中心 X 坐标（屏幕绝对坐标）
+ * @param centerY 中心 Y 坐标（屏幕绝对坐标）
+ * @param number 要显示的数字
+ * @param fontSize 字体大小（像素）
  */
-DrawRedCircle(centerX, centerY, radius) {
-    ; 画一个空心圆，通过计算圆周上的点
-    steps := 36  ; 圆周的点数
-    angleStep := 360 / steps
-
-    Loop steps {
-        angle := A_Index * angleStep
-        rad := angle * (3.14159265359 / 180)  ; 转换为弧度
-        x := Round(centerX + radius * Cos(rad))
-        y := Round(centerY + radius * Sin(rad))
-
-        ; 画一个小红点
-        DrawRedDot(x, y, 3)
-    }
+DrawNumberLabel(centerX, centerY, number, fontSize := 10) {
+    ; 创建一个 GUI 显示数字
+    numGui := Gui("+AlwaysOnTop -Caption +ToolWindow")
+    ; numGui.BackColor := "000000"  ; 黑色背景
+    ; 创建文本控件，设置居中对齐和宽度
+    txt := numGui.AddText("Center w" (fontSize*1.5) " h" fontSize*1.5 " c00FF00", number)
+    txt.SetFont("s" fontSize " w700 c000000", "Arial")  ; w700 表示粗体
+    numGui.Show("NoActivate x" (centerX - fontSize) " y" (centerY - fontSize/2))
+    
+    ; 保存 GUI 引用
+    RedDotGUIs.Push(numGui)
 }
 
 /**
