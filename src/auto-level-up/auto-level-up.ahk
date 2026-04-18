@@ -217,9 +217,8 @@ ScanEnemyArea() {
                     break
                 }
                 MouseMove(currentX, currentY, EnemyAreaMouseMoveSpeed)
-                Sleep(10)
+                Sleep(1)
                 Click()
-                Sleep(10)
             }
         } else {
             ; 奇数行：从右到左
@@ -229,9 +228,8 @@ ScanEnemyArea() {
                     break
                 }
                 MouseMove(currentX, currentY, EnemyAreaMouseMoveSpeed)
-                Sleep(10)
+                Sleep(1)
                 Click()
-                Sleep(10)
             }
         }
     }
