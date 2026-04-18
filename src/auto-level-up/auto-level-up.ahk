@@ -26,15 +26,7 @@ GuiLogger.Init("Auto Level Up - 日志")
 GuiLogger.Log("脚本启动")
 
 ; 初始化调试标记
-InitDebugMarkers(GameWindowTitle, ButtonCoords, {
-    StartX: EnemyAreaStartX,
-    StartY: EnemyAreaStartY,
-    EndX: EnemyAreaEndX,
-    EndY: EnemyAreaEndY,
-    LineSpacing: EnemyAreaScanLineSpacing,
-    ScanStep: EnemyAreaScanStep,
-    MouseSpeed: EnemyAreaMouseMoveSpeed
-}, EnableDebugMarkers, DebugMarkerRadius, DebugVertexMarkerRadius)
+InitDebugMarkers(GameWindowTitle, ButtonCoords, ScanCoords, EnableDebugMarkers, DebugMarkerRadius, DebugVertexMarkerRadius)
 
 ; 启动主循环
 SetTimer(CheckButtonsWrapper, ScanInterval)
@@ -70,14 +62,9 @@ CheckButtonsWrapper() {
         ButtonCoords,
         SelectButtonImage,
         SelectImageVariance,
-        {
-            StartX: EnemyAreaStartX,
-            StartY: EnemyAreaStartY,
-            EndX: EnemyAreaEndX,
-            EndY: EnemyAreaEndY,
-            LineSpacing: EnemyAreaScanLineSpacing,
-            ScanStep: EnemyAreaScanStep,
-            MouseSpeed: EnemyAreaMouseMoveSpeed
-        }
+        ScanCoords,
+        ScanMouseSpeed,
+        ScanMoveStep,
+        ScanClickDelay
     )
 }
