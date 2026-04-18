@@ -73,9 +73,10 @@ SmoothScanCoords(windowTitle, coords, mouseSpeed := 3, moveStep := 50, clickDela
             
             MouseMove(currentX, currentY, mouseSpeed)
             Sleep(1)
+            Click()
         }
         
-        ; 到达目标点后点击
+        Sleep(1)
         Click()
         Sleep(clickDelay)
     }
@@ -162,11 +163,11 @@ SmoothScanWithInterpolation(windowTitle, coords, mouseSpeed := 10, interpolation
         ; 遍历中间点
         for _, point in pathPoints {
             MouseMove(point[1], point[2], mouseSpeed)
-            Sleep(10)
+            Sleep(1)
+            ; 沿着路经点击
+            Click()
         }
         
-        ; 到达目标点后点击
-        Click()
         Sleep(clickDelay)
     }
 }

@@ -46,7 +46,7 @@ CheckButtons(windowTitle, targetColors, colorVariance, buttonCoords, selectButto
         MouseMove(x, y, 0)
 
         ; 稍微等待鼠标移动完成
-        Sleep(50)
+        Sleep(1)
 
         ; 获取该坐标的像素颜色
         currentColor := PixelGetColor(x, y, "RGB")
@@ -64,13 +64,13 @@ CheckButtons(windowTitle, targetColors, colorVariance, buttonCoords, selectButto
             ; 颜色匹配！执行点击 5 次
             Loop 5 {
                 Click()
-                Sleep(20)
+                Sleep(1)
             }
             GuiLogger.Log("点击了按钮 5 次 #" Index " 坐标：" x "," y " 颜色：" Format("{:#x}", currentColor))
             GuiLogger.UpdateStatus("已点击按钮 5 次 #" Index)
 
             ; 点击后稍微停顿一下
-            Sleep(50)
+            Sleep(1)
         }
     }
 
@@ -93,9 +93,9 @@ InitDebugMarkers(windowTitle, buttonCoords, scanCoords, enableDebug, markerRadiu
         return
     }
 
-    ; 绘制按钮坐标位置
-    DrawCoordMarkers(windowTitle, buttonCoords, markerRadius)
-    GuiLogger.Log("已绘制 " buttonCoords.Length " 个按钮坐标的红色标识（调试用）")
+    ; ; 绘制按钮坐标位置
+    ; DrawCoordMarkers(windowTitle, buttonCoords, markerRadius)
+    ; GuiLogger.Log("已绘制 " buttonCoords.Length " 个按钮坐标的红色标识（调试用）")
 
     ; 绘制扫描区域的坐标点
     DrawCoordMarkers(windowTitle, scanCoords, vertexMarkerRadius)
