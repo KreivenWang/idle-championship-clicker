@@ -40,10 +40,10 @@ SelectButtonImage := "select-btn.png"
 SelectImageVariance := 200 ; 图像搜索容差，可根据需要调大
 
 ; 7. 敌人区域扫描配置
-EnemyAreaStartX := 927       ; 扫描区域左上角 X
+EnemyAreaStartX := 1027       ; 扫描区域左上角 X
 EnemyAreaStartY := 461       ; 扫描区域左上角 Y
 EnemyAreaEndX := 2462        ; 扫描区域右下角 X
-EnemyAreaEndY := 1110        ; 扫描区域右下角 Y
+EnemyAreaEndY := 1000        ; 扫描区域右下角 Y
 EnemyAreaScanLineSpacing := 50 ; 每行扫描间距（像素），默认 50
 EnemyAreaScanStep := 50      ; 蛇形扫描每步移动的像素距离，默认 50
 EnemyAreaMouseMoveSpeed := 50 ; 鼠标移动速度 (0-100)，0=瞬间移动，数值越大越慢，默认 3
@@ -218,6 +218,8 @@ ScanEnemyArea() {
                 }
                 MouseMove(currentX, currentY, EnemyAreaMouseMoveSpeed)
                 Sleep(10)
+                Click()
+                Sleep(10)
             }
         } else {
             ; 奇数行：从右到左
@@ -227,6 +229,8 @@ ScanEnemyArea() {
                     break
                 }
                 MouseMove(currentX, currentY, EnemyAreaMouseMoveSpeed)
+                Sleep(10)
+                Click()
                 Sleep(10)
             }
         }
