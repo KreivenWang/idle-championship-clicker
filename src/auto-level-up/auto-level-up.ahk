@@ -4,6 +4,7 @@
 #Include "..\lib\hotkey-util.ahk"
 #Include "..\lib\color-util.ahk"
 #Include "..\lib\gui-logger.ahk"
+#Include "..\lib\coords-debug-util.ahk"
 
 ; ==========================================
 ; ⚙️ 配置区域 (请根据实际情况修改这里)
@@ -48,9 +49,6 @@ EnemyAreaScanLineSpacing := 50 ; 每行扫描间距（像素），默认 50
 EnemyAreaScanStep := 50      ; 蛇形扫描每步移动的像素距离，默认 50
 EnemyAreaMouseMoveSpeed := 50 ; 鼠标移动速度 (0-100)，0=瞬间移动，数值越大越慢，默认 3
 
-; 8. 红色标记点 GUI 数组（内部使用）
-RedDotGUIs := []
-
 ; ==========================================
 ; 🚀 核心逻辑 (下面代码通常不需要动)
 ; ==========================================
@@ -70,8 +68,15 @@ GuiLogger.Init("Auto Level Up - 日志")
 ; 记录脚本启动
 GuiLogger.Log("脚本启动")
 
-; 启动时画一次按钮坐标位置（调试用）
-DrawButtonCoordMarkers()
+; 启动时绘制调试标记
+; 1. 绘制按钮坐标位置
+DrawCoordMarkers(GameWindowTitle, ButtonCoords, 15)
+GuiLogger.Log("已绘制 " ButtonCoords.Length " 个按钮坐标的红色标识（调试用）")
+
+; 2. 绘制扫描区域的两个顶点（左上角和右下角）
+EnemyAreaVertices := [[EnemyAreaStartX, EnemyAreaStartY], [EnemyAreaEndX, EnemyAreaEndY]]
+DrawCoordMarkers(GameWindowTitle, EnemyAreaVertices, 20)
+GuiLogger.Log("已绘制扫描区域 2 个顶点的红色标识（调试用）")
 
 ; 主循环
 SetTimer(CheckButtons, ScanInterval)
@@ -174,88 +179,6 @@ TryClickSelectButton() {
 
     GuiLogger.Log("未检测到选择按钮：" SelectButtonImage)
     return false
-}
-
-/**
- * 在每个 ButtonCoords 位置画红色高亮标识（圆形）
- * 使用红色圆圈标记每个按钮坐标位置，便于视觉确认
- * 仅在脚本启动时调用一次用于调试
- */
-DrawButtonCoordMarkers() {
-    global GameWindowTitle, ButtonCoords
-
-    ; 获取窗口位置
-    WinPos := WindowUtils.GetPosition(GameWindowTitle)
-    if !IsObject(WinPos) {
-        return
-    }
-
-    ; 遍历所有坐标，画红色圆圈
-    for Index, Coord in ButtonCoords {
-        ; 计算屏幕绝对坐标
-        x := WinPos.x + Coord[1]
-        y := WinPos.y + Coord[2]
-
-        ; 画红色圆圈标识（半径 15 像素）
-        DrawRedCircle(x, y, 15)
-    }
-    
-    GuiLogger.Log("已绘制 " ButtonCoords.Length " 个按钮坐标的红色标识（调试用）")
-}
-
-/**
- * 在指定位置画一个红色圆圈
- * @param centerX 圆心 X 坐标
- * @param centerY 圆心 Y 坐标
- * @param radius 圆的半径
- */
-DrawRedCircle(centerX, centerY, radius) {
-    ; 使用红色画圆（RGB: 0xFF0000）
-    ; 画一个空心圆，通过计算圆周上的点
-    steps := 36  ; 圆周的点数
-    angleStep := 360 / steps
-
-    Loop steps {
-        angle := A_Index * angleStep
-        rad := angle * (3.14159265359 / 180)  ; 转换为弧度
-        x := Round(centerX + radius * Cos(rad))
-        y := Round(centerY + radius * Sin(rad))
-
-        ; 画一个小红点
-        DrawRedDot(x, y, 3)
-    }
-}
-
-/**
- * 在指定位置画一个红色小点
- * @param x X 坐标
- * @param y Y 坐标
- * @param size 点的大小（半径）
- */
-DrawRedDot(x, y, size) {
-    global RedDotGUIs
-    
-    ; 创建一个小 GUI 作为红点
-    dotGui := Gui("+AlwaysOnTop -Caption +ToolWindow")
-    dotGui.BackColor := "FF0000"  ; 红色
-    dotGui.Show("w" (size * 2) " h" (size * 2) " NoActivate x" (x - size) " y" (y - size))
-    
-    ; 保存 GUI 引用以便后续清理
-    RedDotGUIs.Push(dotGui)
-}
-
-/**
- * 清理所有红色标记点
- */
-CleanupRedDots() {
-    global RedDotGUIs
-    
-    for gui in RedDotGUIs {
-        if (gui) {
-            gui.Destroy()
-        }
-    }
-    RedDotGUIs := []
 }
 
 /**
