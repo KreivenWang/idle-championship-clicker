@@ -57,12 +57,13 @@ ButtonCount := 13
 
 /**
  * 按钮坐标数组（由上述参数计算生成）
- * 格式：[[x1, y1], [x2, y2], ...]
+ * 格式：[[x1, y1, enabled], [x2, y2, enabled], ...]
+ * 第三个元素为 flag，表示是否启用该按钮
  */
 ButtonCoords := []
 Loop ButtonCount {
     x := ButtonStartX + (A_Index - 1) * ButtonWidth
-    ButtonCoords.Push([x, ButtonY])
+    ButtonCoords.Push([x, ButtonY, true])  ; 默认启用所有按钮
 }
 
 ; ==========================================
@@ -180,8 +181,9 @@ ScanCoords := [
 
     [2471, 980],  
     [2297,592],
-    [1768,684],
-    [1125, 721],   
+    [1768,884],
+    [1280, 750],
+    [2468,884],
 ]
 
 /**

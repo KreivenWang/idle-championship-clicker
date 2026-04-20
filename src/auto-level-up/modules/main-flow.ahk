@@ -37,6 +37,12 @@ CheckButtons(windowTitle, targetColors, colorVariance, buttonCoords, selectButto
         Index := totalCount - A_Index + 1  ; 从后往前
         Coord := buttonCoords[Index]
 
+        ; 检查该按钮是否启用（检查坐标数组中的 flag）
+        if (Coord.Length >= 3 && !Coord[3]) {
+            ; 该按钮被禁用，跳过
+            continue
+        }
+
         ; 获取窗口位置，计算屏幕绝对坐标
         WinPos := WindowUtils.GetPosition(windowTitle)
         x := WinPos.x + Coord[1]

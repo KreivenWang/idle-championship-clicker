@@ -5,6 +5,7 @@
 #Include "..\lib\gui-logger.ahk"
 #Include "modules\config.ahk"
 #Include "modules\main-flow.ahk"
+#Include "modules\button-toggle-gui.ahk"
 
 ; ==========================================
 ; 🚀 脚本启动与初始化
@@ -24,6 +25,9 @@ GuiLogger.Init("Auto Level Up - 日志")
 
 ; 记录脚本启动
 GuiLogger.Log("脚本启动")
+
+; 创建按钮开关 GUI
+CreateButtonToggleGUI(&ButtonCoords, "按钮开关控制")
 
 ; 初始化调试标记
 InitDebugMarkers(GameWindowTitle, ButtonCoords, ScanCoords, EnableDebugMarkers, DebugMarkerRadius, DebugVertexMarkerRadius)
