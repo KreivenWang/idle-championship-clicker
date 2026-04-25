@@ -4,6 +4,14 @@
 
 这是一个用于 Unity 游戏 **Idle Champions of the Forgotten Realms** 的自动化辅助工具项目，主要使用 **AutoHotkey v2.0** 编写。项目实现游戏内自动升级、窗口操作和点击测试等脚本功能。
 
+### 项目结构
+
+- **`src/auto-level-up/`** - 主自动升级脚本（核心项目）
+- **`src/star-dive/`** - Star Dive 自动脚本（衍生产物，与 auto-level-up 无关，仅共用 `src/lib/` 工具库）
+- **`src/lib/`** - 可复用的库函数（工具模块，供所有子项目共用）
+- **`src/tests/`** - 测试脚本
+- **`docs/`** - 文档说明
+
 ## 技术栈
 
 - **主要语言**: AutoHotkey v2.0
