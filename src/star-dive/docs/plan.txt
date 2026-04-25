@@ -1,4 +1,5 @@
 requirement:
+auto-start-dive.ahk为主程序，可以参考auto-level-up的架构，但不需要修改star-dive文件夹以外的内容。
 
 1.保持导航状态开启
 比较navigation-off 和 navigation-on按钮，保持navigation-on状态，如果是off， 按R，如果on，什么都不做。 按钮坐标范围：坐标点（2436,1148）周围100像素
