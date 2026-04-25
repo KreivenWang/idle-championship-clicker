@@ -55,7 +55,5 @@ EnsureNavigationOn(windowTitle, navigationOnImage, navigationOffImage, imageVari
         return true
     }
 
-    ; 都没有检测到
-    GuiLogger.Log("未检测到导航按钮状态")
     return false
 }

@@ -13,7 +13,7 @@
  * 游戏窗口标题
  * 如果不确定，可以留空 ""，脚本会默认操作当前激活的窗口
  */
-GameWindowTitle := "Idle Champions"
+GameWindowTitle := "STAR DIVE"
 
 ; ==========================================
 ; 导航按钮配置
@@ -46,25 +46,24 @@ NavigationImageVariance := 50
 ; ==========================================
 
 /**
- * F按钮检测中心坐标
+ * F按钮搜索区域左上角 X 坐标
  */
-InteractButtonCenterX := 1508
-InteractButtonCenterY := 811
+InteractAreaLeft := 1280 - 150000
 
 /**
- * F按钮检测范围（中心点周围半径）
+ * F按钮搜索区域左上角 Y 坐标
  */
-InteractButtonRadius := 50
+InteractAreaTop := 1090 - 150000
 
 /**
- * F按钮图片路径
+ * F按钮搜索区域右下角 X 坐标
  */
-InteractButtonImage := "docs\interact-f.png"
+InteractAreaRight := 1280 + 150000
 
 /**
- * F按钮图像搜索容差
+ * F按钮搜索区域右下角 Y 坐标
  */
-InteractImageVariance := 50
+InteractAreaBottom := 1090 + 150000
 
 ; ==========================================
 ; 扫描频率配置
@@ -97,9 +96,5 @@ GetNavigationSearchRegion() {
  * @return Array [left, top, right, bottom]
  */
 GetInteractSearchRegion() {
-    local left := InteractButtonCenterX - InteractButtonRadius
-    local top := InteractButtonCenterY - InteractButtonRadius
-    local right := InteractButtonCenterX + InteractButtonRadius
-    local bottom := InteractButtonCenterY + InteractButtonRadius
-    return [left, top, right, bottom]
+    return [InteractAreaLeft, InteractAreaTop, InteractAreaRight, InteractAreaBottom]
 }

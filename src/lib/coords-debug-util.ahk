@@ -74,6 +74,45 @@ DrawRedDot(x, y, size) {
 }
 
 /**
+ * 在指定区域画一个红色矩形框
+ * @param left 左上角 X 坐标（屏幕绝对坐标）
+ * @param top 左上角 Y 坐标（屏幕绝对坐标）
+ * @param right 右下角 X 坐标（屏幕绝对坐标）
+ * @param bottom 右下角 Y 坐标（屏幕绝对坐标）
+ */
+DrawRedRect(left, top, right, bottom) {
+    global RedDotGUIs
+    
+    local width := right - left
+    local height := bottom - top
+    local borderWidth := 2
+    
+    ; 上边
+    topGui := Gui("+AlwaysOnTop -Caption +ToolWindow")
+    topGui.BackColor := "FF0000"
+    topGui.Show("w" width " h" borderWidth " NoActivate x" left " y" top)
+    RedDotGUIs.Push(topGui)
+    
+    ; 下边
+    bottomGui := Gui("+AlwaysOnTop -Caption +ToolWindow")
+    bottomGui.BackColor := "FF0000"
+    bottomGui.Show("w" width " h" borderWidth " NoActivate x" left " y" (bottom - borderWidth))
+    RedDotGUIs.Push(bottomGui)
+    
+    ; 左边
+    leftGui := Gui("+AlwaysOnTop -Caption +ToolWindow")
+    leftGui.BackColor := "FF0000"
+    leftGui.Show("w" borderWidth " h" height " NoActivate x" left " y" top)
+    RedDotGUIs.Push(leftGui)
+    
+    ; 右边
+    rightGui := Gui("+AlwaysOnTop -Caption +ToolWindow")
+    rightGui.BackColor := "FF0000"
+    rightGui.Show("w" borderWidth " h" height " NoActivate x" (right - borderWidth) " y" top)
+    RedDotGUIs.Push(rightGui)
+}
+
+/**
  * 清理所有红色标记点
  * 调用此函数会销毁所有绘制的红点
  */
