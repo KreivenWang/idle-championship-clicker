@@ -12,6 +12,9 @@
 ; Star Dive 自动启动脚本
 ; ==========================================
 
+; 全局变量：存储交互定时器项
+InteractTimerItems := []
+
 ; 让脚本适应高 DPI 屏幕，确保没有 windows 缩放 125% 150%，确保坐标和颜色检测准确
 DllCall("SetProcessDPIAware")
 
@@ -27,18 +30,21 @@ GuiLogger.Init("Star Dive - 日志")
 ; 记录脚本启动
 GuiLogger.Log("Star Dive 脚本启动")
 
-; 启动主循环
-SetTimer(MainLoopWrapper, ScanInterval)
+; 启动导航状态保持定时器
+SetTimer(NavigationLoopWrapper, ScanInterval)
+
+; 为每个交互项创建独立定时器
+SetupInteractTimers()
 
 ; ==========================================
-; 主循环包装函数
+; 导航状态保持包装函数
 ; ==========================================
 
 /**
- * 主循环包装函数
- * 用于定时器调用，执行导航状态保持和自动交互
+ * 导航状态保持包装函数
+ * 用于定时器调用，执行导航状态保持
  */
-MainLoopWrapper() {
+NavigationLoopWrapper() {
     ; 检查是否暂停
     if (HotkeyUtil.IsPaused()) {
         return
@@ -56,7 +62,7 @@ MainLoopWrapper() {
     ; 获取搜索区域
     local navRegion := GetNavigationSearchRegion()
 
-    ; 1. 保持导航状态开启
+    ; 保持导航状态开启
     EnsureNavigationOn(
         GameWindowTitle,
         NavigationOnImage,
@@ -64,7 +70,60 @@ MainLoopWrapper() {
         NavigationImageVariance,
         navRegion
     )
+}
 
-    ; 2. 自动触发交互
-    TryInteract()
+; ==========================================
+; 交互定时器设置
+; ==========================================
+
+/**
+ * 为每个交互项创建独立定时器
+ */
+SetupInteractTimers() {
+    global InteractItems
+    global InteractTimerItems
+    
+    ; 初始化数组
+    InteractTimerItems := []
+    
+    for i, item in InteractItems {
+        ; 将交互项存储到全局数组，通过索引访问
+        InteractTimerItems.Push(item)
+        ; 创建定时器，传入索引
+        SetTimer(CreateInteractTimerFunc(i), ScanInterval)
+        GuiLogger.Log("已创建 交互定时器" item.LogMsg)
+    }
+    
+}
+
+/**
+ * 创建交互定时器函数
+ * @param index Integer 交互项索引
+ * @return Func 定时器回调函数
+ */
+CreateInteractTimerFunc(index) {
+    return (*) => InteractTimerCallback(index)
+}
+
+/**
+ * 交互定时器回调函数
+ * @param index Integer 交互项索引
+ */
+InteractTimerCallback(index) {
+    global InteractTimerItems
+    
+    ; 检查是否暂停
+    if (HotkeyUtil.IsPaused()) {
+        return
+    }
+
+    ; 检查窗口是否存在
+    if (GameWindowTitle != "") {
+        if !WindowUtils.Exists(GameWindowTitle) {
+            return
+        }
+    }
+
+    ; 检测并触发单个交互项
+    TryInteractSingle(InteractTimerItems[index])
 }
