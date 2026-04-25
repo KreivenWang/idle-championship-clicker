@@ -37,11 +37,11 @@ TryInteract() {
         ;     WinPos.x + right, WinPos.y + bottom
         ; )
 
-        if (FindText(&FoundX, &FoundY, left, top, right, bottom, 0, 0, item.Text)) {
+        if (FindText(&FoundX, &FoundY, left, top, right, bottom, 0.3, 0.1, item.Text)) {
             GuiLogger.Log(item.LogMsg)
             for action in item.Action {
                 if (action.HasOwnProp("Click") && action.Click) {
-                    MouseMove(FoundX, FoundY, 0)
+                    MouseMove(FoundX + 25, FoundY, 0)
                     Sleep(50)
                     Click()
                 } else if (action.HasOwnProp("Key")) {
@@ -49,7 +49,6 @@ TryInteract() {
                 }
                 Sleep(action.Delay)
             }
-            GuiLogger.Log("已发送按键序列")
         }
     }
 

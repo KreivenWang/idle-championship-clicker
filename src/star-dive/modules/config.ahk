@@ -64,16 +64,31 @@ InteractItems := [{
     RangeY: 150000,
     Action: [{ Key: "{f}", Delay: 200 }
     ],
-    LogMsg: "检测到 F 按钮，按 F 键交互"
+    LogMsg: "F"
 }, {
-    Text:"|<>*210$44.zzztzzzzzzyTzzzzzzbzzzzzzUTzzzzzU1zzwxzz3zzz7Dztzzj8tzyTznX7Dzbzllstzzzssz7DzzwQTstzzyCDz7Dzz77zstzzXXzz7Dzllzzstzsszzz7DwQzzzstyCTzzz7DDDzzzstzbzzzz7DXzzzzsttzzzzz7Dzzzzzsszzzzzz7Dzzzzzszzzzzzz7zzzzzztzzzs",
+    Text: "|<>*210$44.zzztzzzzzzyTzzzzzzbzzzzzzUTzzzzzU1zzwxzz3zzz7Dztzzj8tzyTznX7Dzbzllstzzzssz7DzzwQTstzzyCDz7Dzz77zstzzXXzz7Dzllzzstzsszzz7DwQzzzstyCTzzz7DDDzzzstzbzzzz7DXzzzzsttzzzzz7Dzzzzzsszzzzzz7Dzzzzzszzzzzzz7zzzzzztzzzs",
     AnchorX: 1280,
     AnchorY: 1367,
-    RangeX: 200,
-    RangeY: 200,
-    Action: [{ Click: true, Delay: 200 }, { Key: "{1}", Delay: 200 }, { Key: "{2}", Delay: 200 }, { Key: "{3}", Delay: 200 }
-    ],
-    LogMsg: "检测到对话顶部星星，点击箭头并按 123 键交互"
+    RangeX: 500,
+    RangeY: 500,
+    Action: [{ Click: true, Delay: 200 }, { Key: "{1}", Delay: 200 }, { Key: "{2}", Delay: 200 }, { Key: "{3}", Delay: 200 }],
+    LogMsg: "点击箭头并按 123 键交互"
+}, {
+    Text: "|<>FECF64-323232$148.zzUTzzzzzzzzzwTzsTzyDz7zzzy1zzzU0700Dz0zz0zzsDsDzzzs7zzy00800Ty1zw3zz0z0DzzzUTzzs00U01zs7zUTzs7y0Dzzy1zzzU02007zkDy3zz0zw0Tzzs7zzy00800S000007k7zw1z00000DsTUUS1s00000S0zzsDw00000zVy21s7U00001k7s000k00003y7s87US000007UtU00100000Ds00US1s00000S70000400000zU021s7zzzzzzws0000Tzzzzzy0087UTzzzzsTz0U001znzwTzs00US1y00C71zw3zUTzsDzkTzVy21s7s00sA7zUTy1zzUzy1zy7s87UTU03UkTw3zs7zy1zs7zsTUUS1y00C31z0DzUTzw7zUTzU021s7sTUsA7s0zy1zzkTy3zy0087UTVy3UkT03zs7zz0zsDzs00US1y00C31w0D000Dy3z0zzU021s7s00sA7s0w000zsDw3zy08M7UTU03UkTW3k003zUzkTzsTDUS1y00C31zMD000Dy3z1zzVky1s7sTUsA7zUw000zs7s7zy71s7UTVy3UkTy3zs7zzkTUzzsQ3US1y00C31zsDzUTzz1y3zzVsC007s00sA7zUzy1zzw7kDzy60M40zU03UkTy3zs7zzlz1zzs00UE3y00C31zsDzUTzzzw7zy00210TsTUzw7zUzy1zk00001k00863zVy3zkTy3zs7z0000030000Tzy7sDz1zsA000000000C0D01zzsM0y07zUk000000000sDwM7zzVk3w0Ty30000000007bzvUTzy70Tk1zsA0003zzzzzzzzy1zzsQ1zUTzUzzzzzzzzzzzzzwDzzzzzzzzz3zzzzU",
+    AnchorX: 2303,
+    AnchorY: 1252,
+    RangeX: 500,
+    RangeY: 400,
+    Action: [{ Click: true, Delay: 1000 }, { Key: "{space}", Delay: 1000 },],
+    LogMsg: "立即前往, 1s, 确认"
+}, {
+    Text: "|<>#449-0.68$73.01zzzzzzzzk007zzzzzzzzz00Dk00000007s0D000000000S0D3zzzzzzzy7UC7zzzzzzzzksCDzzzzzzzzyC6DzzzzzzzzzX7Ds7zzzzzzztn7s1zzzzzzzwNbsMTzzzzzzzBrwCDzzzzzzzbny7w0w3kD0zttzUS0A0k30Dwwzs334AMkXXySTz0VVw8M01zDDzsFkU4Dk0zbbwC8s1W7sLznvz64AEVX0ADngzU2080E10DtaTs30C0A1kDsnbzzXzzzzzzwslzzlzzzzzzwMQTzzzzzzzzwQ73zzzzzzzzsQ1sTzzzzzzzkw0T000000000w07s00000003w00zzzzzzzzzs003zzzzzzzzU0U",
+    AnchorX: 1280,
+    AnchorY: 1090,
+    RangeX: 150000,
+    RangeY: 150000,
+    Action: [{ Key: "{space}", Delay: 100 },],
+    LogMsg: "space（确认/前往）"
 }
 ]
 
@@ -85,7 +100,7 @@ InteractItems := [{
  * 检测频率（毫秒）
  * 每多少毫秒扫描一次屏幕
  */
-ScanInterval := 1000
+ScanInterval := 100
 
 ; ==========================================
 ; 坐标计算辅助函数
