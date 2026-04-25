@@ -40,7 +40,7 @@ TryInteractSingle(item) {
         Try For i, v in ok  ; ok value can be get from ok:=FindText().ok
             if (i <= 2)
                 FindText().MouseTip(ok[i].x, ok[i].y)
-        GuiLogger.Log(item.LogMsg " " item.Text " " FoundX " " FoundY)
+        GuiLogger.Log(item.LogMsg  " at " FoundX ", " FoundY)
         for action in item.Action {
             if (action.HasOwnProp("Click") && action.Click) {
                 ; 点击位置偏移 25 像素

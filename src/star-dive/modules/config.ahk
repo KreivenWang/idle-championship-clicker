@@ -58,10 +58,10 @@ NavigationImageVariance := 50
  */
 InteractItems := [{
     Text: "|<>*90$30.s0007U0001jzzzxDzzzwDs07wDs07wDs07wDs07wjsDzwDsDzwDsDzwDsDzwDsDzwDs07wDs07wDs07wDs07wTsDzxzsDzwDsDzwDsDzwDsDzwDsDzwDsDzwDsDzwDsDzwDzzzwjzzzxU0001s000DU",
-    top: 1492,
-    left: 698,
-    right: 1568,
-    bottom: 975,
+    left: 1499,
+    top: 775,
+    right: 1563,
+    bottom: 886,
     Action: [{ Key: "{f}", Delay: 10 }
     ],
     LogMsg: "交互：F"
