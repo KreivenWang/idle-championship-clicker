@@ -27,17 +27,6 @@ GuiLogger.Init("Star Dive - 日志")
 ; 记录脚本启动
 GuiLogger.Log("Star Dive 脚本启动")
 
-; 绘制调试标记
-navRegion := GetNavigationSearchRegion()
-WinPos := WindowUtils.GetPosition(GameWindowTitle)
-if IsObject(WinPos) {
-    ; DrawRedRect(
-    ;     WinPos.x + navRegion[1], WinPos.y + navRegion[2],
-    ;     WinPos.x + navRegion[3], WinPos.y + navRegion[4]
-    ; )
-    GuiLogger.Log("已绘制坐标范围红色矩形框")
-}
-
 ; 启动主循环
 SetTimer(MainLoopWrapper, ScanInterval)
 
