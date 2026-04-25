@@ -30,8 +30,8 @@ CreateButtonToggleGUI(&buttonCoords, title := "按钮开关控制") {
     for Index, Coord in buttonCoords {
         ; 根据 Coord[3] 判断是否选中
         checked := (Coord.Length >= 3 && Coord[3]) ? " Checked" : ""
-        ; 创建 checkbox
-        cb := toggleGui.AddCheckbox("w200" checked, "按钮 #" Index)
+        ; 创建 checkbox（显示为 #0-#12）
+        cb := toggleGui.AddCheckbox("w200" checked, "按钮 #" Index - 1)
         ; 绑定事件，当 checkbox 状态改变时更新 buttonCoords
         cb.OnEvent("Click", ButtonCheckboxChanged)
         ButtonCheckboxes.Push({gui: cb, index: Index, coords: buttonCoords})

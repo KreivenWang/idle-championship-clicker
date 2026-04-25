@@ -1,0 +1,9 @@
+requirement:
+
+1.保持导航状态开启
+比较navigation-off 和 navigation-on按钮，保持navigation-on状态，如果是off， 按R，如果on，什么都不做。 按钮坐标范围：坐标点（2436,1148）周围100像素
+
+2. 自动触发交互
+出现F按钮(interact-f.png)，则按F。按钮坐标范围：坐标点（1508，811）周围50像素为长宽半径的范围内，
+
+3. 所有坐标和范围可配置
