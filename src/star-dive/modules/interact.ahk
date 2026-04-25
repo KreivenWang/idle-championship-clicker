@@ -37,9 +37,9 @@ TryInteractSingle(item) {
     ; )
 
     if (ok := FindText(&FoundX, &FoundY, item.left, item.top, item.right, item.bottom, 0, 0, item.Text)) {
-        Try For i, v in ok  ; ok value can be get from ok:=FindText().ok
-            if (i <= 2)
-                FindText().MouseTip(ok[i].x, ok[i].y)
+        ; Try For i, v in ok  ; ok value can be get from ok:=FindText().ok
+        ;     if (i <= 2)
+        ;         FindText().MouseTip(ok[i].x, ok[i].y)
         GuiLogger.Log(item.LogMsg  " at " FoundX ", " FoundY)
         for action in item.Action {
             if (action.HasOwnProp("Click") && action.Click) {
