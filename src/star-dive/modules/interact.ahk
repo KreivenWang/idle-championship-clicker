@@ -37,17 +37,20 @@ TryInteract() {
         ;     WinPos.x + right, WinPos.y + bottom
         ; )
 
-        if (FindText(&FoundX, &FoundY, left, top, right, bottom, 0.3, 0.1, item.Text)) {
+        if (FindText(&FoundX, &FoundY, left, top, right, bottom, 0, 0, item.Text)) {
             GuiLogger.Log(item.LogMsg)
             for action in item.Action {
                 if (action.HasOwnProp("Click") && action.Click) {
-                    MouseMove(FoundX + 25, FoundY, 0)
-                    Sleep(50)
+                    ; 点击位置偏移 25 像素
+                    MouseMove(FoundX + 25, FoundY, 0) 
+                    Sleep(5)
                     Click()
                 } else if (action.HasOwnProp("Key")) {
                     Send(action.Key)
                 }
-                Sleep(action.Delay)
+                if (action.HasOwnProp("Delay") && action.Delay > 0) {
+                    Sleep(action.Delay)
+                }
             }
         }
     }
